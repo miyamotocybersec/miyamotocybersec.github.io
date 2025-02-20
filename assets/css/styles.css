@@ -57,6 +57,15 @@ a.nav-item, a.nav-item:hover {
 .project-text {
     text-align: justify;
 }
+.project-text a {
+    color: #39ff14; /* Neon green */
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.project-text a:hover {
+    text-decoration: underline;
+}
 
 .box {
     background-color: transparent;
@@ -92,4 +101,3 @@ a.nav-item, a.nav-item:hover {
         background-color: #000000;
     }
 }
-
