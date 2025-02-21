@@ -192,14 +192,26 @@
                     <article>
                         <div>
                             <figure class="image project-figure">
-                                <iframe id="tryhackme-badge" src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=3867635" width="250px" scrolling="no"></iframe>
-                                <script>
-                                  const iframe = document.getElementById('tryhackme-badge');
-                                  const isMobile = window.innerWidth <= 768; // Adjust 768 to your desired breakpoint
-                                
-                                  iframe.width = isMobile ? '150px' : '450px';
-                                </script>
-                            </figure>
+                                <style>
+                                .responsive-iframe {
+                                    width: 450px; 
+                                    height: auto;
+                                    border: none; /* Removes any border */
+                                    overflow: hidden; /* Hides any scrolling elements */
+                                }
+                            
+                                @media screen and (max-width: 768px) {
+                                    .responsive-iframe {
+                                        width: 150px;
+                                    }
+                                }
+                            </style>
+                            
+                            <iframe 
+                                class="responsive-iframe"
+                                src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=3867635">
+                            </iframe>
+                        </figure>
                         </div>
                         <div>
                             <p>Voici mon compte sur la plateforme "TryHackMe" (une platforme ou on peut apprendre la cybersécurité)</p>
