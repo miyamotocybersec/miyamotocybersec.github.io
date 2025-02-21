@@ -17,7 +17,7 @@ a:hover {
 }
 
 body {
-  font-size: 15px;
+  font-size: 15.5px;
 }
 
 .container {
@@ -27,10 +27,10 @@ body {
 
 @media (max-width: 768px) {
   .column {
-    width: 100%;
+    width: 125%;
   }
   .image {
-    max-width: 100%; 
+    max-width: 125%; 
     height: auto;
   }
 }
@@ -88,7 +88,8 @@ a.nav-item, a.nav-item:hover {
 
 .box {
     background-color: transparent;
-    border: 2px solid rgba(7, 59, 79, 0.5);
+    border: 2px solid rgba(57, 255, 20, 1); 
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.8), 0 0 20px rgba(57, 255, 20, 0.6), 0 0 30px rgba(57, 255, 20, 0.4);
 }
 
 .title, .intro { 
@@ -107,7 +108,7 @@ a.nav-item, a.nav-item:hover {
     background-color: transparent;
 }
 
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1400px) {
     .nav-menu {
         background-color: #000000;
     }
