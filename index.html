@@ -10,29 +10,40 @@
     <link rel="icon" type="image/x-icon" href="https://i.ibb.co/gLwfKbr4/th-2722860232.jpg">
     <meta name="author" content="Miyamoto Pierre">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .easter-egg-link {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background-color: black;
+            color: #00FF00;
+            padding: 8px 12px;
+            font-family: monospace;
+            font-size: 13px;
+            border-radius: 5px;
+            text-decoration: none;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+        .easter-egg-link:hover {
+            opacity: 1;
+        }
+        .project-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .project-box {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .project-text {
+            text-align: center;
+        }
+    </style>
 </head>
-
-<style>
-    .easter-egg-link {
-        position: front;
-        bottom: 10px;
-        right: 10px;
-        background-color: black;
-        color: #00FF00; 
-        padding: 8px 12px;
-        font-family: monospace;
-        font-size: 13px;
-        border-radius: 5px;
-        text-decoration: none;
-        opacity: 1;
-        transition: opacity 0.3s;
-    }
-    .easter-egg-link:hover {
-        opacity: 1;
-    }
-</style>
-<a href="easter-egg.html" class="easter-egg-link">THE MATRIX 👾?</a>
 <body>
+    <a href="easter-egg.html" class="easter-egg-link">THE MATRIX 👾?</a>
     <div class="nav-right nav-menu">
         <a class="nav-item" href="#about">À propos</a>
         <a class="nav-item" href="#projects">Projets</a>
@@ -42,25 +53,26 @@
         <span></span>
         <span></span>
     </span>
-</nav>
-<section id="about" class="section section-1">
+    <nav>
+        <!-- Navigation content -->
+    </nav>
+    <section id="about" class="section section-1">
+        <div class="container has-text-centered">
+            <h1 class="title is-2 matrix-title">Pierre MIYAMOTO</h1>
+            <img src="https://i.ibb.co/ynTQHbbb/Whats-App-Image-2025-02-05-at-11-04-41-AM.jpg" alt="PROFILE PICTURE" border="0" style="width: 40%; height: auto;">
+        </div>
+        <div class="container"></br>
+            <p class="intro typing-effect">
+                Bonjour, je suis Pierre MIYAMOTO, et suis un lycéen étudiant au Bon Sauveur, je suis un passionné de cybersécurité, et je parle courament le Français, L'anglais, et le Japonais (voyez mes projets ci-dessous). Vous trouverez mes coordonnées tout en bas.
+            </p>
+        </div>
+    </section>
     <div class="container has-text-centered">
-        <h1 class="title is-2 matrix-title">Pierre MIYAMOTO</h1>
-        <img src="https://i.ibb.co/ynTQHbbb/Whats-App-Image-2025-02-05-at-11-04-41-AM.jpg" alt="PROFILE PICTURE" border="0" style="width: 40%; height: auto;"></a>
+        <h2 class="title is-3 matrix-title">Project:</h2>
     </div>
-    <div class="container"></br>
-        <p class="intro typing-effect">
-            Bonjour, je suis Pierre MIYAMOTO, et suis un lycéen étudiant au Bon Sauveur, je suis un passionné de cybersécurité, et je parle courament le Français, L'anglais, et le Japonais (voyez mes projets ci-dessous). Vous trouverez mes coordonnées tout en bas.
-        </p>
-    </div>
-</section>
-<div class="container has-text-centered">
-  <h2 class="title is-3 matrix-title">Project:</h2>
-</div>
-<section  id="projects" class="section section-2">
-    <div class="container">
-        <div class="columns is-multiline is-desktop">
-            <div class="column">
+    <section id="projects" class="section section-2">
+        <div class="container project-container">
+            <div class="project-box">
                 <div class="box project-text">
                     <article>
                         <div>
@@ -76,12 +88,12 @@
                     </article>
                 </div>
             </div>
-            <div class="column">
+            <div class="project-box">
                 <div class="box project-text">
                     <article>
                         <div>
                             <figure class="image project-figure">
-                                <img src="https://i.ibb.co/Cp1STj6m/Screenshot-From-2025-02-17-19-31-44.png" border="0"></a>
+                                <img src="https://i.ibb.co/Cp1STj6m/Screenshot-From-2025-02-17-19-31-44.png" border="0">
                             </figure>
                         </div>
                         <div>
@@ -94,14 +106,12 @@
                     </article>
                 </div>
             </div>
-        </div>
-        <div class="columns is-multiline is-desktop">
-            <div class="column">
+            <div class="project-box">
                 <div class="box project-text">
                     <article>
                         <div>
                             <figure class="image project-figure">
-                                <img src="https://i.ibb.co/sJ3C8KcP/Whats-App-Image-2025-02-17-at-8-45-36-PM.jpg" border="0"></a>
+                                <img src="https://i.ibb.co/sJ3C8KcP/Whats-App-Image-2025-02-17-at-8-45-36-PM.jpg" border="0">
                             </figure>
                         </div>
                         <div>
@@ -112,114 +122,105 @@
                     </article>
                 </div>
             </div>
-        <div class="columns is-multiline is-desktop">
-            <div class="column">
+            <div class="project-box">
                 <div class="box project-text">
                     <article>
                         <div>
                             <figure class="image project-figure">
-                                <img src="https://i.ibb.co/ynPF0y9j/Whats-App-Image-2025-02-18-at-9-45-35-PM.jpg" border="0"></a>
+                                <img src="https://i.ibb.co/ynPF0y9j/Whats-App-Image-2025-02-18-at-9-45-35-PM.jpg" border="0">
                             </figure>
                         </div>
                         <div>
                             <p>
                                 J’ai acquis une expérience pratique avec la carte de développement ESP32 de M5Stack, en l’intégrant avec un module radio CC1101 pour l’analyse et la reproduction de signaux, notamment le contrôle de téléviseurs, l’accès à des portails et la copie de signaux de portes de voiture. De plus, j’ai réaliser des attaques de désauthentification sur les routeurs Wi-Fi et en menant des attaques de type « twin attack », qui consistent à créer un point d’accès malveillant pour capturer les identifiants des utilisateurs via un portail wifi frauduleux. J’ai également acquis des compétences en surveillance du trafique réseau, en interception et en déchiffrement de paquets type "handshake" à l’aide d’attaques basées sur des listes de mots.
+                            </p>
                         </div>
                     </article>
                 </div>
             </div>
-        <div class="columns is-multiline is-desktop">
-        <div class="column">
-            <div class="box project-text">
-                <article>
-                    <div>
-                        <figure class="image project-figure">
-                            <a href="https://static.gl-inet.com/www/images/products/gl-mt1300/mt1300_1.webp" target="_blank">
-                                <img src="https://static.gl-inet.com/www/images/products/gl-mt1300/mt1300_1.webp">
-                            </a>
-                        </figure>
-                    </div>
-                    <div>
-                        <p>
-                            J'ai utilisé OpenWRT pour créer mon propre routeur WiFi, puis je l'ai modifié pour créer mon propre 
-                            <a href="https://shop.hak5.org/products/wifi-pineapple" target="_blank">Hak5</a> "WiFi Pineapple".
-                        </p>
-                    </div>
-                </article>
+            <div class="project-box">
+                <div class="box project-text">
+                    <article>
+                        <div>
+                            <figure class="image project-figure">
+                                <a href="https://static.gl-inet.com/www/images/products/gl-mt1300/mt1300_1.webp" target="_blank">
+                                    <img src="https://static.gl-inet.com/www/images/products/gl-mt1300/mt1300_1.webp">
+                                </a>
+                            </figure>
+                        </div>
+                        <div>
+                            <p>
+                                J'ai utilisé OpenWRT pour créer mon propre routeur WiFi, puis je l'ai modifié pour créer mon propre
+                                <a href="https://shop.hak5.org/products/wifi-pineapple" target="_blank">Hak5</a> "WiFi Pineapple".
+                            </p>
+                        </div>
+                    </article>
+                </div>
             </div>
-        </div>
-        <div class="column">
-            <div class="box project-text">
-                <article>
-                    <div>
-                        <figure class="image project-figure">
+            <div class="project-box">
+                <div class="box project-text">
+                    <article>
+                        <div>
+                            <figure class="image project-figure">
                                 <img src="https://i.ibb.co/6RGPnMkC/Whats-App-Image-2025-02-20-at-9-17-40-PM.jpg">
-                            </a>
-                        </figure>
-                    </div>
-                    <div>
-                        <p>J'ai pu programmer un mini-ordinateur USB de type 'Rubber Ducky' pour créer un périphérique USB physique qui, lorsqu'il est branché sur une machine Windows (Windows 7, 10 ou 11), peut voler les mots de passe des navigateurs comme <i>Brave</i>, <i>Chromium</i> ou <i>Chrome</i>, et les stocker sur une carte SD cachée à l'intérieur de l'USB.</p>
-                    </div>
-                </article>
+                            </figure>
+                        </div>
+                        <div>
+                            <p>J'ai pu programmer un mini-ordinateur USB de type 'Rubber Ducky' pour créer un périphérique USB physique qui, lorsqu'il est branché sur une machine Windows (Windows 7, 10 ou 11), peut voler les mots de passe des navigateurs comme <i>Brave</i>, <i>Chromium</i> ou <i>Chrome</i>, et les stocker sur une carte SD cachée à l'intérieur de l'USB.</p>
+                        </div>
+                    </article>
+                </div>
             </div>
-        </div>
-        <div class="column">
-            <div class="box project-text">
-                <article>
-                    <div>
-                        <figure class="image project-figure">
+            <div class="project-box">
+                <div class="box project-text">
+                    <article>
+                        <div>
+                            <figure class="image project-figure">
                                 <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.6mnLmbpED8s28oZN9xzlegHaD4%26pid%3DApi&f=1&ipt=2ff0c0fc4435ad49892f4cf610cf42a5d281cc34d36f8a40e9fd3b725650f6b2&ipo=images" style="width: 120%;" border="0">
-                            </a>
-                        </figure>
-                    </div>
-                    <div>
-                        <p>
-                             J'ai appris à "hacké" des réseaux Wi-Fi WPA et WPA2 à l'aide d'un outil Kali Linux appelé "wifite" et après étre rentré dnas un network, j'ai pu contrôler des lumières connectées à l'aide d'un outil appelé "Huely", qui utilise le Wi-Fi pour se connecter à des ampoules compatibles. 
-                        </p>
-                    </div>
-                </article>
+                            </figure>
+                        </div>
+                        <div>
+                            <p>
+                                J'ai appris à "hacké" des réseaux Wi-Fi WPA et WPA2 à l'aide d'un outil Kali Linux appelé "wifite" et après étre rentré dnas un network, j'ai pu contrôler des lumières connectées à l'aide d'un outil appelé "Huely", qui utilise le Wi-Fi pour se connecter à des ampoules compatibles.
+                            </p>
+                        </div>
+                    </article>
+                </div>
             </div>
-        </div>
-            <div class="columns is-multiline is-desktop">
-                <div class="column">
-                    <div class="box project-text">
-                        <article>
-                            <div>
-                                <figure class="image project-figure">
-                                    <iframe src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=3867635" width: 350px;"></iframe>
-                                </figure>
-                            </div>
-                            <div>
-                                    Voici mon compte sur la plateforme "TryHackMe" 
-                                    <p>(une platforme ou on peut apprendre la cybersécurité)</p>
-                            </div>
-                        </article>
-                    </div>
+            <div class="project-box">
+                <div class="box project-text">
+                    <article>
+                        <div>
+                            <figure class="image project-figure">
+                                <iframe src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=3867635" width: 350px;"></iframe>
+                            </figure>
+                        </div>
+                        <div>
+                            <p>Voici mon compte sur la plateforme "TryHackMe" (une platforme ou on peut apprendre la cybersécurité)</p>
+                        </div>
+                    </article>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-<section class="section-4 has-text-centered container">
-    <h3 class="matrix-title">miyamoto.pierre@gmail.com</h3>
-</section>
-<script src="controller.js"></script>
-<script>
-    function matrixEffect(element) {
-        const text = element.textContent;
-        element.innerHTML = '';
-
-        for (let char of text) {
-            const span = document.createElement('span');
-            span.textContent = char;
-            span.style.position = 'relative';
-            span.style.animation = `matrixFall ${Math.random() * 2 + 1}s linear infinite`;
-            element.appendChild(span);
+    </section>
+    <section class="section-4 has-text-centered container">
+        <h3 class="matrix-title">miyamoto.pierre@gmail.com</h3>
+    </section>
+    <script src="controller.js"></script>
+    <script>
+        function matrixEffect(element) {
+            const text = element.textContent;
+            element.innerHTML = '';
+            for (let char of text) {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.style.position = 'relative';
+                span.style.animation = `matrixFall ${Math.random() * 2 + 1}s linear infinite`;
+                element.appendChild(span);
+            }
         }
-    }
-
-    const matrixTitles = document.querySelectorAll('.matrix-title');
-    matrixTitles.forEach(matrixEffect);
-</script>
+        const matrixTitles = document.querySelectorAll('.matrix-title');
+        matrixTitles.forEach(matrixEffect);
+    </script>
 </body>
 </html>
