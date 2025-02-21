@@ -192,7 +192,13 @@
                     <article>
                         <div>
                             <figure class="image project-figure">
-                                <iframe src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=3867635" width="250px" scrolling="no"></iframe>
+                                <iframe id="tryhackme-badge" src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=3867635" width="250px" scrolling="no"></iframe>
+                                <script>
+                                  const iframe = document.getElementById('tryhackme-badge');
+                                  const isMobile = window.innerWidth <= 768; // Adjust 768 to your desired breakpoint
+                                
+                                  iframe.width = isMobile ? '150px' : '450px';
+                                </script>
                             </figure>
                         </div>
                         <div>
