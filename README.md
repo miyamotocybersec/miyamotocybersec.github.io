@@ -31,7 +31,7 @@ Ouvrir **index.html** dans un navigateur (connexion Internet requise).
 
 ### **Contact**  
 📧 miyamoto.pierre@gmail.com
-
+``m̀d
          _nnnn_                      
         dGGGGMMb     ,"""""""""""""".
        @p~qp~~qMb    | Linux Rules! |
@@ -48,3 +48,4 @@ Ouvrir **index.html** dans un navigateur (connexion Internet requise).
 _)      \.___.,|     .'
 \____   )MMMMMM|   .'
      `-'       `--' 
+``
