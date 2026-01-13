@@ -9,7 +9,6 @@
     <link rel="stylesheet" type="text/css" href="assets/css/styles.css">
     <link rel="icon" type="image/x-icon" href="https://i.ibb.co/gLwfKbr4/th-2722860232.jpg">
     <meta name="author" content="Miyamoto Pierre">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .neon-link {
             color: #00ff00;
@@ -18,7 +17,6 @@
             font-size: 20px;
             text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00;
             transition: 0.3s;
-            
         }
 
         .neon-link:hover {
@@ -38,6 +36,7 @@
             text-decoration: none;
             opacity: 1;
             transition: opacity 0.3s;
+            z-index: 1000;
         }
         .easter-egg-link:hover {
             opacity: 1;
@@ -247,19 +246,19 @@
                                     border: none; 
                                     overflow: hidden; 
                                 }
-                            
+
                                 @media screen and (max-width: 1000px) {
                                     .responsive-iframe {
                                         width: 150px;
                                     }
                                 }
-                            </style>
-                            
-                            <iframe 
-                                class="responsive-iframe"
-                                src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=3867635">
-                            </iframe>
-                        </figure>
+                                </style>
+
+                                <iframe 
+                                    class="responsive-iframe"
+                                    src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=3867635">
+                                </iframe>
+                            </figure>
                         </div>
                         <div>
                             <p>Voici mon compte sur la plateforme "TryHackMe" (une platforme où on peut apprendre la cybersécurité)</p>
@@ -272,21 +271,281 @@
     <section class="section-4 has-text-centered container">
         <h3 class="matrix-title">miyamoto.pierre@gmail.com</h3>
     </section>
-    <script src="controller.js"></script>
+
+    <!-- SINGLE SCRIPT: all animations & injected styles live here -->
     <script>
-        function matrixEffect(element) {
-            const text = element.textContent;
-            element.innerHTML = '';
-            for (let char of text) {
-                const span = document.createElement('span');
-                span.textContent = char;
-                span.style.position = 'relative';
-                span.style.animation = `matrixFall ${Math.random() * 2 + 1}s linear infinite`;
-                element.appendChild(span);
-            }
+    document.addEventListener('DOMContentLoaded', function () {
+        /* -------------------------
+           Inject dynamic CSS (keyframes + helper classes)
+           ------------------------- */
+        const css = `
+        /* matrix falling chars */
+        @keyframes matrixFall {
+            0% { opacity: 0; transform: translateY(-12px) scale(0.98); }
+            20% { opacity: 1; transform: translateY(0) scale(1); }
+            80% { opacity: 1; transform: translateY(6px) scale(1.02); }
+            100% { opacity: 0; transform: translateY(18px) scale(0.98); }
         }
-        const matrixTitles = document.querySelectorAll('.matrix-title');
-        matrixTitles.forEach(matrixEffect);
+        @keyframes neonPulse {
+            0% { text-shadow: 0 0 6px #00ff00, 0 0 10px #00ff00, 0 0 14px #00ff00; transform: translateY(0); }
+            100% { text-shadow: 0 0 14px #00ff00, 0 0 28px #00ff00, 0 0 40px #00ff00; transform: translateY(-2px); }
+        }
+        @keyframes floatY {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+            100% { transform: translateY(0); }
+        }
+        .matrix-title span { display:inline-block; will-change: transform, opacity; }
+        .neon-animate { animation: neonPulse 1.2s ease-in-out infinite alternate; }
+        .easter-float { animation: floatY 3s ease-in-out infinite; }
+        .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s cubic-bezier(.2,.9,.3,1), transform 0.6s cubic-bezier(.2,.9,.3,1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .img-zoom { transition: transform 400ms cubic-bezier(.2,.8,.2,1), box-shadow 400ms; will-change: transform; }
+        .img-zoom:hover { transform: scale(1.04); box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+        .nav-menu.is-active { opacity: 1; transform: translateY(0); }
+        .nav-menu .nav-item { display: inline-block; transform: translateY(-6px); opacity: 0; transition: transform 300ms ease, opacity 300ms ease; }
+        .nav-menu .nav-item.visible { transform: translateY(0); opacity: 1; }
+        .responsive-iframe { transition: width 520ms cubic-bezier(.2,.8,.2,1); }
+        `;
+        const styleTag = document.createElement('style');
+        styleTag.textContent = css;
+        document.head.appendChild(styleTag);
+
+        /* -------------------------
+           Matrix title: split into spans & animate
+           ------------------------- */
+        function applyMatrixEffect() {
+            const titles = document.querySelectorAll('.matrix-title');
+            titles.forEach(title => {
+                const text = title.textContent.trim();
+                title.innerHTML = '';
+                for (let i = 0; i < text.length; i++) {
+                    const ch = text[i] === ' ' ? '\u00A0' : text[i];
+                    const span = document.createElement('span');
+                    span.textContent = ch;
+                    const dur = (1.2 + Math.random() * 1.8).toFixed(2) + 's';
+                    const delay = (Math.random() * 1.2).toFixed(2) + 's';
+                    span.style.animation = `matrixFall ${dur} linear ${delay} infinite`;
+                    // tiny horizontal wiggle
+                    span.style.display = 'inline-block';
+                    title.appendChild(span);
+                }
+            });
+        }
+        applyMatrixEffect();
+
+        /* -------------------------
+           Typing effect for .typing-effect (type once)
+           ------------------------- */
+        (function typingEffect() {
+            const typers = document.querySelectorAll('.typing-effect');
+            typers.forEach(el => {
+                const full = el.textContent.trim();
+                el.textContent = '';
+                el.style.whiteSpace = 'pre-wrap';
+                const chars = Array.from(full);
+                let i = 0;
+                const speed = 18 + Math.random() * 10; // ms per char
+                const cursor = document.createElement('span');
+                cursor.textContent = '\u258F';
+                cursor.style.marginLeft = '2px';
+                cursor.style.opacity = '1';
+                cursor.style.transition = 'opacity .25s';
+                el.appendChild(cursor);
+                const interval = setInterval(() => {
+                    if (i < chars.length) {
+                        cursor.remove();
+                        el.textContent += chars[i++];
+                        el.appendChild(cursor);
+                        // small random pause for punctuation
+                        if (chars[i - 1] === ',' || chars[i - 1] === '.' || chars[i - 1] === ':') {
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                typingEffect(); // restart to continue
+                            }, 120 + Math.random() * 160);
+                        }
+                    } else {
+                        clearInterval(interval);
+                        // blink cursor a few times then remove
+                        let blink = 0;
+                        const b = setInterval(() => {
+                            cursor.style.opacity = cursor.style.opacity === '1' ? '0' : '1';
+                            blink++;
+                            if (blink > 6) {
+                                clearInterval(b);
+                                cursor.remove();
+                            }
+                        }, 220);
+                    }
+                }, speed);
+
+                // local recursive helper to continue after pauses
+                function typingEffect() {
+                    const charsLeft = chars.slice(i);
+                    const innerInterval = setInterval(() => {
+                        if (i < chars.length) {
+                            cursor.remove();
+                            el.textContent += chars[i++];
+                            el.appendChild(cursor);
+                        } else {
+                            clearInterval(innerInterval);
+                        }
+                    }, speed);
+                }
+            });
+        })();
+
+        /* -------------------------
+           Nav toggle with staggered items + smooth scrolling
+           ------------------------- */
+        (function navToggleAndSmoothScroll() {
+            const toggle = document.querySelector('.nav-toggle');
+            const menu = document.querySelector('.nav-right.nav-menu') || document.querySelector('.nav-menu');
+            if (!toggle || !menu) return;
+            menu.style.transition = 'opacity 300ms ease, transform 300ms ease';
+            toggle.style.cursor = 'pointer';
+            toggle.addEventListener('click', () => {
+                menu.classList.toggle('is-active');
+                const items = Array.from(menu.querySelectorAll('.nav-item'));
+                if (menu.classList.contains('is-active')) {
+                    // show with stagger
+                    items.forEach((it, idx) => {
+                        setTimeout(() => it.classList.add('visible'), idx * 70);
+                    });
+                } else {
+                    // hide quickly
+                    items.forEach(it => it.classList.remove('visible'));
+                }
+            });
+
+            // smooth scrolling for anchors
+            document.querySelectorAll('a[href^="#"]').forEach(a => {
+                a.addEventListener('click', (ev) => {
+                    const href = a.getAttribute('href');
+                    if (href.length > 1) {
+                        ev.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
+                });
+            });
+        })();
+
+        /* -------------------------
+           Scroll reveal for project boxes (staggered)
+           ------------------------- */
+        (function revealOnScroll() {
+            const boxes = document.querySelectorAll('.project-box');
+            boxes.forEach((b, idx) => {
+                b.classList.add('reveal'); // initial invisible
+                // small stagger offset for left/right movement
+                b.style.transitionDelay = (idx * 80) + 'ms';
+                // add img-zoom class to images inside
+                const imgs = b.querySelectorAll('img');
+                imgs.forEach(img => img.classList.add('img-zoom'));
+            });
+
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // once visible, unobserve for performance
+                        io.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+
+            boxes.forEach(b => io.observe(b));
+        })();
+
+        /* -------------------------
+           Neon link hover pulse
+           ------------------------- */
+        (function neonHover() {
+            document.querySelectorAll('.neon-link').forEach(link => {
+                link.addEventListener('mouseenter', () => link.classList.add('neon-animate'));
+                link.addEventListener('mouseleave', () => link.classList.remove('neon-animate'));
+            });
+        })();
+
+        /* -------------------------
+           Easter egg: gentle float + blink
+           ------------------------- */
+        (function easterEggMotion() {
+            const egg = document.querySelector('.easter-egg-link');
+            if (!egg) return;
+            egg.classList.add('easter-float');
+            // gentle blink every 3-6s
+            setInterval(() => {
+                egg.style.opacity = '0.25';
+                setTimeout(() => egg.style.opacity = '1', 220);
+            }, 4200 + Math.random() * 3000);
+        })();
+
+        /* -------------------------
+           Responsive iframe width tweak (animated)
+           ------------------------- */
+        (function iframeResize() {
+            const iframe = document.querySelector('iframe.responsive-iframe');
+            if (!iframe) return;
+            function applyWidth() {
+                const w = window.innerWidth;
+                if (w < 700) {
+                    iframe.style.width = Math.max(220, Math.floor(w * 0.72)) + 'px';
+                } else if (w < 1000) {
+                    iframe.style.width = '420px';
+                } else {
+                    iframe.style.width = '600px';
+                }
+            }
+            applyWidth();
+            window.addEventListener('resize', () => {
+                applyWidth();
+            });
+            // small hover grow
+            iframe.addEventListener('mouseenter', () => { iframe.style.width = (parseInt(iframe.style.width) + 40) + 'px'; });
+            iframe.addEventListener('mouseleave', () => { applyWidth(); });
+        })();
+
+        /* -------------------------
+           Make sure images in figures are a bit nicer on mobile & animated
+           ------------------------- */
+        (function imageTweaks() {
+            document.querySelectorAll('figure.image img').forEach(img => {
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                img.style.display = 'block';
+                img.style.margin = '0 auto';
+            });
+        })();
+
+        /* -------------------------
+           Accessibility: reduce motion respect
+           ------------------------- */
+        (function prefersReducedMotion() {
+            const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+            if (mq && mq.matches) {
+                // remove animations for users who prefer reduced motion
+                document.querySelectorAll('.matrix-title').forEach(t => {
+                    t.style.animation = 'none';
+                    t.querySelectorAll('span').forEach(s => {
+                        s.style.animation = 'none';
+                    });
+                });
+                document.querySelectorAll('.neon-animate').forEach(n => n.classList.remove('neon-animate'));
+                document.querySelectorAll('.easter-float').forEach(e => e.style.animation = 'none');
+            }
+        })();
+
+        /* -------------------------
+           Small polish: re-run matrix effect on window focus (keeps it lively)
+           ------------------------- */
+        window.addEventListener('focus', () => {
+            applyMatrixEffect();
+        });
+    });
     </script>
 </body>
 </html>
