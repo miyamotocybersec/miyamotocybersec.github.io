@@ -60,17 +60,9 @@
 </head>
 <body>
     <a href="easter-egg.html" class="easter-egg-link">THE MATRIX 👾?</a>
-    <div class="nav-right nav-menu">
-        <a class="nav-item" href="#about">À propos</a>
-        <a class="nav-item" href="#projects">Projets</a>
-    </div>
-    <span class="nav-toggle">
-        <span></span>
-        <span></span>
-        <span></span>
-    </span>
-    <nav>
-    </nav>
+
+    <!-- Removed: nav-right nav-menu, nav-toggle, and empty <nav> -->
+
     <section id="about" class="section section-1">
         <div class="container has-text-centered">
             <h1 class="title is-2 matrix-title">Pierre MIYAMOTO</h1>
@@ -124,6 +116,7 @@
                     </article>
                 </div>
             </div>
+            <!-- The rest of the project boxes remain unchanged -->
             <div class="project-box">
                 <div class="box project-text">
                     <article>
@@ -244,10 +237,10 @@
                             <figure class="image project-figure">
                                 <style>
                                 .responsive-iframe {
-                                    width: 600px; 
+                                    width: 600px;
                                     height: auto;
-                                    border: none; 
-                                    overflow: hidden; 
+                                    border: none;
+                                    overflow: hidden;
                                 }
                                 @media screen and (max-width: 1000px) {
                                     .responsive-iframe {
@@ -255,7 +248,7 @@
                                     }
                                 }
                                 </style>
-                                <iframe 
+                                <iframe
                                     class="responsive-iframe"
                                     src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=3867635">
                                 </iframe>
@@ -273,6 +266,7 @@
         <h3 class="matrix-title">miyamoto.pierre@gmail.com</h3>
     </section>
 
+    <!-- The script remains completely unchanged -->
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         const css = `
@@ -302,7 +296,6 @@
         const styleTag = document.createElement('style');
         styleTag.textContent = css;
         document.head.appendChild(styleTag);
-
         function applyMatrixEffect() {
             const titles = document.querySelectorAll('.matrix-title');
             titles.forEach(title => {
@@ -328,7 +321,6 @@
             }, 2100);
         }
         applyMatrixEffect();
-
         (function typingEffect() {
             const typers = document.querySelectorAll('.typing-effect');
             typers.forEach(el => {
@@ -367,17 +359,8 @@
                 typeNext();
             });
         })();
-
         (function navToggleAndSmoothScroll() {
-            const toggle = document.querySelector('.nav-toggle');
-            const menu = document.querySelector('.nav-right.nav-menu') || document.querySelector('.nav-menu');
-            if (!toggle || !menu) return;
-            menu.classList.add('is-active');
-            const items = Array.from(menu.querySelectorAll('.nav-item'));
-            items.forEach(it => it.classList.add('visible'));
-            toggle.addEventListener('click', () => {
-                menu.classList.toggle('open');
-            });
+            // Kept but now does almost nothing since nav elements are gone
             document.querySelectorAll('a[href^="#"]').forEach(a => {
                 a.addEventListener('click', (ev) => {
                     const href = a.getAttribute('href');
@@ -391,7 +374,6 @@
                 });
             });
         })();
-
         (function revealOnScroll() {
             const boxes = document.querySelectorAll('.project-box');
             boxes.forEach((b, idx) => {
@@ -410,14 +392,12 @@
             }, { threshold: 0.12 });
             boxes.forEach(b => io.observe(b));
         })();
-
         (function neonHover() {
             document.querySelectorAll('.neon-link').forEach(link => {
                 link.addEventListener('mouseenter', () => link.classList.add('neon-animate'));
                 link.addEventListener('mouseleave', () => link.classList.remove('neon-animate'));
             });
         })();
-
         (function easterEggMotion() {
             const egg = document.querySelector('.easter-egg-link');
             if (!egg) return;
@@ -427,7 +407,6 @@
                 setTimeout(() => egg.style.opacity = '1', 220);
             }, 4200 + Math.random() * 3000);
         })();
-
         (function iframeResize() {
             const iframe = document.querySelector('iframe.responsive-iframe');
             if (!iframe) return;
@@ -448,7 +427,6 @@
             iframe.addEventListener('mouseenter', () => { iframe.style.width = (parseInt(iframe.style.width) + 40) + 'px'; });
             iframe.addEventListener('mouseleave', () => { applyWidth(); });
         })();
-
         (function imageTweaks() {
             document.querySelectorAll('figure.image img').forEach(img => {
                 img.style.maxWidth = '100%';
@@ -457,7 +435,6 @@
                 img.style.margin = '0 auto';
             });
         })();
-
         (function bulbFlickerStartup() {
             const targets = document.querySelectorAll('.matrix-title');
             targets.forEach(t => t.classList.add('bulb-flicker'));
@@ -465,7 +442,6 @@
                 targets.forEach(t => t.classList.remove('bulb-flicker'));
             }, 2000);
         })();
-
         (function prefersReducedMotion() {
             const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
             if (mq && mq.matches) {
@@ -479,7 +455,6 @@
                 document.querySelectorAll('.easter-float').forEach(e => e.style.animation = 'none');
             }
         })();
-
         window.addEventListener('focus', () => {
             applyMatrixEffect();
         });
