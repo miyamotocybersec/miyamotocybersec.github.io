@@ -39,15 +39,51 @@
             z-index: 9999;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.15s;
+            transition: opacity 0.2s;
         }
         #crash-gif {
-            width: 70vmin;           /* responsive but large */
-            max-width: 600px;
+            width: 75vmin;
+            max-width: 700px;
             height: auto;
-            margin-bottom: 30px;
-            border: 4px solid #fff;
-            box-shadow: 0 0 30px #ff4444;
+            margin-bottom: 40px;
+            border: 5px solid #fff;
+            box-shadow: 0 0 40px #ff2222, 0 0 80px #ff0000;
+            animation: explode 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes explode {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2) rotate(5deg);
+                opacity: 0.8;
+                filter: brightness(1.5) contrast(1.2);
+            }
+            100% {
+                transform: scale(1.4) rotate(-5deg);
+                opacity: 0.6;
+                filter: brightness(2) contrast(1.5) blur(2px);
+            }
+        }
+        #nuke-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: #ff4444;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 20;
+            transition: background 0.3s, transform 0.3s;
+        }
+        #nuke-button:hover {
+            background: #ff0000;
+            transform: scale(1.1);
         }
     </style>
 </head>
@@ -56,9 +92,11 @@
     <img id="logo" src="https://dontclickit.org/wp-content/uploads/2024/05/cropped-dont-click-it-logo-1-330x109.png">
 
     <div id="crash-overlay">
-        <img id="crash-gif" src="https://cache.magicmaman.com/data/fichiers/48/bombenucleaire.gif" alt="BOOM">
-        bye bye ram
+        <img id="crash-gif" src="https://cache.magicmaman.com/data/fichiers/48/bombenucleaire.gif" alt="NUCLEAR">
+        bye bye ram … and cpu
     </div>
+
+    <button id="nuke-button">nuke ?</button>
 
     <script>
         const canvas = document.getElementById("matrixCanvas");
@@ -115,18 +153,43 @@
                 y = Math.max(0, Math.min(y, window.innerHeight - h));
             }
 
-            logo.style.left = x + "px";
-            logo.style.top = y + "px";
+            logo.style.left = `${x}px`;
+            logo.style.top = `${y}px`;
 
             requestAnimationFrame(updateLogo);
         }
 
         requestAnimationFrame(updateLogo);
 
-        logo.addEventListener("click", () => {
+        const titleStrings = [];
+        for (let i = 0; i < 120; i++) {
+            let str = '';
+            for (let j = 0; j < 512; j++) {
+                str += Math.random().toString(16)[2];
+            }
+            titleStrings.push(str);
+        }
+
+        function startBrashExploit() {
+            let counter = 0;
+            const brashInterval = setInterval(() => {
+                for (let burst = 0; burst < 80; burst++) {
+                    document.title = titleStrings[counter % titleStrings.length] + " 💀 BYE";
+                    counter++;
+                }
+                if (Math.random() > 0.92) {
+                    document.title = "crash in progress...";
+                }
+                if (counter > 500000) {
+                    clearInterval(brashInterval);
+                }
+            }, 4);
+        }
+
+        function triggerCrash() {
             let flashCount = 0;
-            const maxFlashes = 40;           // ~30 seconds total if you want long effect
-            const flashIntervalMs = 750;     // 0.75 seconds per flash
+            const maxFlashes = 60;
+            const flashIntervalMs = 750;
 
             const interval = setInterval(() => {
                 if (flashCount % 2 === 0) {
@@ -140,27 +203,33 @@
 
                 if (flashCount >= maxFlashes) {
                     clearInterval(interval);
-                    overlay.style.opacity = "0";
+                    overlay.style.background = "red";
+                    overlay.style.opacity = "0.96";
 
-                    // Optional: keep the final red screen with gif longer
-                    setTimeout(() => {
-                        overlay.style.background = "red";
-                        overlay.style.opacity = "0.92";
-                    }, 1200);
-
-                    // RAM hog (will most likely just freeze/crash the tab)
                     setTimeout(() => {
                         try {
                             let memHog = [];
                             while (true) {
-                                memHog.push(new Array(1000000).fill(Math.random() * 100));
+                                memHog.push(new Array(1000000).fill(Math.random() * 999999));
                             }
-                        } catch (e) {
-                            console.log("RAM attempt stopped", e);
-                        }
-                    }, 1800);
+                        } catch (e) {}
+                    }, 300);
+
+                    setTimeout(() => {
+                        startBrashExploit();
+                    }, 800);
                 }
             }, flashIntervalMs);
+        }
+
+        logo.addEventListener("click", triggerCrash);
+
+        const nukeButton = document.getElementById("nuke-button");
+        nukeButton.addEventListener("click", () => {
+            nukeButton.style.display = "none";
+            overlay.style.opacity = "1";
+            document.getElementById("crash-gif").style.animation = "explode 1.5s ease-in-out 1";
+            setTimeout(triggerCrash, 1600);
         });
 
         window.addEventListener("resize", () => {
