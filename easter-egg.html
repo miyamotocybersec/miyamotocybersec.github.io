@@ -29,35 +29,52 @@
             inset: 0;
             background: red;
             color: white;
-            font-size: 4.5vw;
+            font-size: 5.5vw;
             font-weight: bold;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
             z-index: 9999;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.1s;
+            transition: opacity 0.15s;
+        }
+        #crash-gif {
+            width: 70vmin;           /* responsive but large */
+            max-width: 600px;
+            height: auto;
+            margin-bottom: 30px;
+            border: 4px solid #fff;
+            box-shadow: 0 0 30px #ff4444;
         }
     </style>
 </head>
 <body>
     <canvas id="matrixCanvas"></canvas>
     <img id="logo" src="https://dontclickit.org/wp-content/uploads/2024/05/cropped-dont-click-it-logo-1-330x109.png">
-    <div id="crash-overlay">bye bye ram</div>
+
+    <div id="crash-overlay">
+        <img id="crash-gif" src="https://cache.magicmaman.com/data/fichiers/48/bombenucleaire.gif" alt="BOOM">
+        bye bye ram
+    </div>
+
     <script>
         const canvas = document.getElementById("matrixCanvas");
         const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+
         const katakana = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
         const latin = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         const nums = "0123456789";
         const alphabet = katakana + latin + nums;
+
         const fontSize = 16;
         let columns = Math.floor(canvas.width / fontSize);
         let drops = Array(columns).fill(1);
+
         function drawMatrix() {
             ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -72,18 +89,23 @@
                 drops[i]++;
             }
         }
+
         setInterval(drawMatrix, 50);
+
         const logo = document.getElementById("logo");
         const overlay = document.getElementById("crash-overlay");
+
         let x = Math.random() * (window.innerWidth - 260) + 20;
         let y = Math.random() * (window.innerHeight - 140) + 20;
         let dx = (Math.random() > 0.5 ? 1 : -1) * (2.2 + Math.random() * 1.4);
         let dy = (Math.random() > 0.5 ? 1 : -1) * (2.2 + Math.random() * 1.4);
+
         function updateLogo() {
             const w = logo.offsetWidth;
             const h = logo.offsetHeight;
             x += dx;
             y += dy;
+
             if (x <= 0 || x + w >= window.innerWidth) {
                 dx = -dx;
                 x = Math.max(0, Math.min(x, window.innerWidth - w));
@@ -92,14 +114,20 @@
                 dy = -dy;
                 y = Math.max(0, Math.min(y, window.innerHeight - h));
             }
+
             logo.style.left = x + "px";
             logo.style.top = y + "px";
+
             requestAnimationFrame(updateLogo);
         }
+
         requestAnimationFrame(updateLogo);
+
         logo.addEventListener("click", () => {
             let flashCount = 0;
-            const maxFlashes = 50; // 50 × 10 ms = 500 ms
+            const maxFlashes = 40;           // ~30 seconds total if you want long effect
+            const flashIntervalMs = 750;     // 0.75 seconds per flash
+
             const interval = setInterval(() => {
                 if (flashCount % 2 === 0) {
                     overlay.style.background = "red";
@@ -107,25 +135,34 @@
                     overlay.style.background = "white";
                 }
                 overlay.style.opacity = "1";
+
                 flashCount++;
+
                 if (flashCount >= maxFlashes) {
                     clearInterval(interval);
                     overlay.style.opacity = "0";
+
+                    // Optional: keep the final red screen with gif longer
+                    setTimeout(() => {
+                        overlay.style.background = "red";
+                        overlay.style.opacity = "0.92";
+                    }, 1200);
+
+                    // RAM hog (will most likely just freeze/crash the tab)
                     setTimeout(() => {
                         try {
-                            // Infinite loop to consume RAM (using JavaScript; PHP/HTML can't loop client-side like this)
                             let memHog = [];
                             while (true) {
-                                memHog.push(new Array(1000000).fill(Math.random()));
+                                memHog.push(new Array(1000000).fill(Math.random() * 100));
                             }
                         } catch (e) {
-                            // Fallback alert if the loop is somehow blocked
-                            alert("RAM hog attempt initiated (may freeze tab)");
+                            console.log("RAM attempt stopped", e);
                         }
-                    }, 100);
+                    }, 1800);
                 }
-            }, 10);
+            }, flashIntervalMs);
         });
+
         window.addEventListener("resize", () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -136,6 +173,7 @@
                 drops = drops.slice(0, newColumns);
             }
             columns = newColumns;
+
             x = Math.max(0, Math.min(x, window.innerWidth - logo.offsetWidth));
             y = Math.max(0, Math.min(y, window.innerHeight - logo.offsetHeight));
         });
